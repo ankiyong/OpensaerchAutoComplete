@@ -1,0 +1,9 @@
+{
+    "query" : {
+        "match" : {
+            "artists.items.name" : {
+                "query" : "%s"
+            }
+        }
+    }
+}

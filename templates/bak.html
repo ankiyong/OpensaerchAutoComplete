@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>    
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
+    <link rel="stylesheet" href="/static/css/style.css" type="text/css">
+    <title>메론</title>
+    <style>
+    
+    </style>
+    <div id="header">
+    <h1>
+        <span></span><span></span><span></span><span></span><span>메론</span><span></span>
+        </h1>
+        <div class="mx-auto mt-5 search-bar input-group mb-3">
+            <input name="q" type="text" class="form-control rounded-pill" id="search" placeholder="Artist명 입력" aria-label="Recipient's username" aria-describedby="button-addon2">
+        </div>
+    </div>
+</head>
+<body> 
+    <div id="cont_wrap" class="clfix">
+            <table id="result_list" class= "table table table-border" style="width: 70%;">
+                <thead>
+                <tr>
+                <th class="track-column" scope="col" style="width: 10%;">img</th>
+                <th class="track-column" scope="col" style="width: 45%;">name</th>
+                <th class="track-column" scope="col" style="width: 33%;">genre</th>            
+                <th class="track-column" scope="col" style="width: 12%;">followers</th>
+                </tr>
+                </thead>
+                <tbody id="table_content">
+                </tbody>
+            </table>
+    </div>  
+    <!-- </form> -->
+</body>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4" crossorigin="anonymous"></script>
+
+<script type="text/javascript">
+    $(document).ready(function() {
+        // Enter 키를 누를 때 검색 함수 실행
+        $("#search").keypress(function(event) {
+            if (event.keyCode === 13) {
+            event.preventDefault(); // 기본 동작 취소
+            // artist();            
+            exist();
+            }
+        });
+        });
+    function artist() {
+        var artist = $("#search").val();
+        $.ajax({
+                url: "/artist",
+                type: "GET",
+                data: {q:artist},
+                success: function(data) {                              
+                    $("#search-artist").html("");                                                                                                                     
+                        let artist_info =  `<img class='artist_img' src='${data}'>`;                        
+                        $("#search-artist").append(artist_info);
+                },
+                error: function() {
+                    console.log("fail");
+                }
+            }
+        );
+    };
+    function exist() {
+        var artist = $("#search").val();
+        $.ajax({
+                url: "/exist",
+                type: "GET",
+                data: {q:artist},
+                success: function(data) {          
+                    var obj = data;
+                    var tc = '';
+                    console.log(obj)                                                                                      
+                
+                    followers = obj['artists']['items'][0]['followers']['total']
+                    genres = obj['artists']['items'][0]['genres']
+                    img = obj['artists']['items'][0]['images'][1]['url']
+                    name = obj['artists']['items'][0]['name']
+                    url = obj['artists']['items'][0]['external_urls']['spotify']                       
+
+                    tc += `<tr>`;
+                    tc += `<td><img class='artist_img' src='${img}'></td>`;
+                    tc += `<td class="track_column"><nobr>`+name+`</nobr></td>`;                        
+                    tc += `<td class="vert-m">`+genres+`</td>`;
+                    tc += `<td class="vert-m text-right">`+followers+`</td>`;
+                    tc += `</tr>`;
+                    
+                    $("#table_content").html("");                     
+                    $("#table_content").append(tc);
+                },
+                error: function() {
+                    console.log("fail"+artist);
+                }
+            }
+        );
+    };
+    // function exist() {
+    //     var artist = $("#search").val();
+    //     $.ajax({
+    //             url: "/exist",
+    //             type: "GET",
+    //             data: {q:artist},
+    //             success: function(data) {          
+    //                 var obj = data;
+    //                 var tc = '';                                                                                            
+    //                 for(let i = 0; i < obj.length; i++){
+    //                     let artist = obj[i]["artist"];
+    //                     let track = obj[i]["track"];
+    //                     let img = obj[i]["img"];
+    //                     let pop = obj[i]["popularity"];
+
+    //                     tc += `<tr>`;
+    //                     tc += `<td><img class='artist_img' src='${img}'></td>`;
+    //                     tc += `<td class="track_column"><nobr>`+track+`</nobr></td>`;                        
+    //                     tc += `<td class="vert-m">`+artist+`</td>`;
+    //                     tc += `<td class="vert-m text-right">`+pop+`</td>`;
+    //                     tc += `</tr>`;
+    //                 };
+    //                 $("#table_content").html("");                     
+    //                 $("#table_content").append(tc);
+    //             },
+    //             error: function() {
+    //                 console.log("fail"+artist);
+    //             }
+    //         }
+    //     );
+    // };
+</script>
+</html>
+
